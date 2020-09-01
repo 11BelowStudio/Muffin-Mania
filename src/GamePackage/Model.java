@@ -14,19 +14,7 @@ import static GamePackage.Constants.GAME_WIDTH;
 
 public abstract class Model {
 
-    final List<StringObject> hudObjects;
-    final List<CharacterObject> characterObjects;
-    final List<ButtonObject> buttonObjects;
-    final List<BackgroundRippleObject> backgroundObjects;
 
-
-    final List<StringObject> aliveHUD;
-    final List<CharacterObject> aliveCharacters;
-    final List<ButtonObject> aliveButtonObjects;
-    final List<BackgroundRippleObject> aliveBackground;
-
-
-    final Stack<BackgroundRippleObject> ripples;
 
 
     Color backgroundColor;
@@ -64,6 +52,7 @@ public abstract class Model {
 
     public Model(Controller ctrl, HighScoreHandler hs){
 
+        /*
         hudObjects = new ArrayList<>();
         characterObjects = new ArrayList<>();
         buttonObjects = new ArrayList<>();
@@ -76,6 +65,7 @@ public abstract class Model {
 
         ripples = new Stack<>();
 
+         */
 
         gameOver = false;
         stopThat = false;
@@ -177,9 +167,5 @@ public abstract class Model {
     }
 
     abstract void clearModelCollections();
-
-    boolean canWeSpawnARipple(){
-        return (!ripples.isEmpty());
-    }
 
 }

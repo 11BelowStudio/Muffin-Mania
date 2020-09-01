@@ -24,5 +24,5 @@ public class Constants {
     public static final int RIGHT_INT = 1;
     public static final int DOWN_INT = 2;
     public static final int LEFT_INT = 3;
-    public static final int MID_INT = 5;
+    public static final int MID_INT = 4;
 }

@@ -33,7 +33,7 @@ public class GameRunner {
         frame.addKeyListener(new EscapeListener(this));
         //EscapeListener used to allow the pause button stuff to work.
 
-        HighScoreHandler highScores = new HighScoreHandler("resourcesPlsNoDelet/scores.txt", frame);
+        HighScoreHandler highScores = new HighScoreHandler("resources/scores.txt", frame);
         Controller ctrl = new Controller();
 
         frame.addKeyListener(ctrl);

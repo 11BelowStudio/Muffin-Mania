@@ -59,6 +59,9 @@ public class ImageManager {
             ImageManager.loadImage("CupcakeBot");
             ImageManager.loadImage("Muffin");
             ImageManager.loadImage("CupcakeSpawners");
+            ImageManager.loadImage("MuffinMachine");
+            ImageManager.loadImage("MachineStatus");
+            ImageManager.loadImage("BasicBG");
         } catch (IOException e) { e.printStackTrace(); }
     }
 

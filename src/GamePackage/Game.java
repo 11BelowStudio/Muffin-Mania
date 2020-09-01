@@ -2,6 +2,7 @@ package GamePackage;
 
 import GamePackage.GameObjects.*;
 import utilities.HighScoreHandler;
+import utilities.ImageManager;
 import utilities.SoundManager;
 import utilities.Vector2D;
 
@@ -52,31 +53,24 @@ public class Game extends Model{
     private final ArrayList<CupcakeSpawnerObject> cupcakeSpawners;
 
 
-    private int activeButtonCount;
-
-    private double multiplier;
-
-    //private final AttributeStringObject<Double> multiplierText;
-
     private int cutsceneState;
     private int cutsceneTimer;
     private final int CUTSCENE_STATE_LENGTH = 50;
     private boolean stillInCutscene;
 
+    private boolean canUseMuffins;
+    private boolean gameHasProperlyStarted;
+
     private int cupcakeSpawnTimer;
-    private static final int MIN_CUPCAKE_SPAWN_TIME = 5;
-    private static final int RANGE_CUPCAKE_SPAWN_TIME = 25;
+    private static final int MIN_CUPCAKE_SPAWN_TIME = 25; //5
+    private static final int RANGE_CUPCAKE_SPAWN_TIME = 65; //25
 
     private static final int MAX_MUFFIN_OBJECTS = 15;
     private static final int MAX_CUPCAKE_OBJECTS = 15;
 
     private boolean gameJustEnded;
 
-    private boolean buttonCountChanged;
-
-    private static final int START_VOCALS_BUTTON_COUNT = 3;
-    private static final int START_RUINING_VOCALS_BUTTON_COUNT = 5;
-
+    private Image background;
 
 
 
@@ -120,11 +114,22 @@ public class Game extends Model{
         hudObjects = new ArrayList<>();
         aliveHUD = new ArrayList<>();
 
+        background = ImageManager.getImage("BasicBG");
+
     }
 
     @Override
     void drawModel(Graphics2D g) {
         //DRAW BACKGROUND FIRST
+
+        g.drawImage(
+                background,
+                0,
+                0,
+                GAME_WIDTH,
+                GAME_HEIGHT,
+                null
+        );
 
         for (CupcakeBot c: tCupcakes) {
             c.draw(g);
@@ -162,9 +167,7 @@ public class Game extends Model{
             c.draw(g);
         }
 
-        for (StringObject s: aliveHUD){
-            s.draw(g);
-        }
+        scoreText.draw(g);
 
     }
 
@@ -198,6 +201,7 @@ public class Game extends Model{
         lCupcakes.addAll(lAliveCupcakes);
         lAliveCupcakes.clear();
 
+
         hudObjects.clear();
         hudObjects.addAll(aliveHUD);
         aliveHUD.clear();
@@ -217,11 +221,10 @@ public class Game extends Model{
 
     void startModelMusic(){ }
 
-    void stopModelMusic(){ SoundManager.stopDoingWell(); SoundManager.endBacking(); SoundManager.byePercival(); }
+    void stopModelMusic(){  }
 
     @Override
     void updateLoop() {
-        buttonCountChanged = false;
 
 
         if (stillInCutscene){
@@ -245,9 +248,8 @@ public class Game extends Model{
             //this stuff happens on the first frame of the game being over
             if (gameJustEnded){
 
-                //BLOW UP MUFFIN MACHINE
-
-                //'YOU LOST' TEXT
+                //pretty much kills 'you' and stops the muffin machine from doing its thing
+                you.kill();
 
                 gameJustEnded = false;
             }
@@ -260,143 +262,59 @@ public class Game extends Model{
 
         } else{ //stuff that happens if the game isn't over
 
-            //if you used a muffin
-            if(you.checkIfUsedMuffin()){
-                //get the current state
-                int lane = you.getCurrentState();
-                switch (lane){
-                    case MID_INT:
-                        //if you're at mid, confirm the muffin usage, increase the score by 1, apply muffinStreak to the score, update score display
-                        you.confirmMuffinUsage();
-                        score += 1;
-                        score += muffinStreak;
-                        updateScoreDisplay();
-                        //then increase the muffinStreak modifier by 0.1
-                        muffinStreak += 0.1;
-                        break;
-                    case UP_INT:
-                    case RIGHT_INT:
-                    case DOWN_INT:
-                    case LEFT_INT:
-                        //if you're at a lane, make sure there's stuff in the muffinStack.
-                        //if there is, confirm the muffin usage, reset muffinStreak, and then add the muffin to the appropriate lane
-                        muffinAdder(lane);
-                        break;
+            if (canUseMuffins) { //if you've reached the state of the game where you are allowed to use muffins
+
+                //if you used a muffin
+                if (you.checkIfUsedMuffin()) {
+                    //get the current state
+                    int lane = you.getCurrentState();
+                    switch (lane) {
+                        case MID_INT:
+                            //don't allow user to eat muffins until the game has properly started
+                            if (gameHasProperlyStarted) {
+                                //if you're at mid, confirm the muffin usage, increase the score by 1, apply muffinStreak to the score, update score display
+                                you.confirmMuffinUsage();
+                                score += 1;
+                                score += muffinStreak;
+                                updateScoreDisplay();
+                                //then increase the muffinStreak modifier by 0.5
+                                muffinStreak += 0.5;
+                            }
+                            break;
+                        case UP_INT:
+                        case RIGHT_INT:
+                        case DOWN_INT:
+                        case LEFT_INT:
+                            //if you're at a lane, make sure there's stuff in the muffinStack.
+                            //if there is, confirm the muffin usage, reset muffinStreak, and then add the muffin to the appropriate lane
+                            muffinAdder(lane);
+                            break;
+                    }
                 }
             }
 
             // CUPCAKE BOT SPAWNING
 
-            if (cupcakeSpawnTimer < 1){
-                reviveACupcake();
-            } else{
-                cupcakeSpawnTimer--;
-            }
-        }
-
-        //updating characters
-        for (CharacterObject o: characterObjects){
-            o.update();
-            if (o.stillAlive()){
-                aliveCharacters.add(o);
-            }
-        }
-
-        //updating ripples
-        for (BackgroundRippleObject o: backgroundObjects){
-            o.update();
-            if (o.stillAlive()){
-                aliveBackground.add(o);
-            } else{
-                ripples.push(o);
-            }
-        }
-
-        //working out if collision handling is needed for the buttons
-        boolean needToHandleCollisions = joe.isTryingToPressAButton();
-        //updating buttons
-        for (ButtonObject o: buttonObjects){
-            o.update();
-            //will only attempt to handle collisions if necessary
-            if (needToHandleCollisions && o.collideWithPlayer(joe)){
-                //collideWithPlayer performs necessary updates if the player did collide with the buttonObject
-                score += (o.getPoints())*multiplier;
-                updateScoreDisplay();
-                reviveRipple(o); //spawns ripple
-                needToHandleCollisions = false; //no more collision checking
-            }
-            if (o.stillAlive()){
-                aliveButtonObjects.add(o);
-            } else{
-                buttonStack.add(o);
-                buttonCountChanged = true;
-                SoundManager.playDespawn();
-            }
-        }
-
-        if (gameOver){
-            if (ctrl.getTheAnyButton()){
-                endThis();
-            }
-        } else{
-            if (!stillInCutscene){
-                if (cupcakeSpawnTimer < 1){
+            //only spawn them in once the game has properly started
+            if (gameHasProperlyStarted) {
+                if (cupcakeSpawnTimer < 1) {
                     reviveACupcake();
-                } else{
+                } else {
                     cupcakeSpawnTimer--;
                 }
             }
         }
 
-        if (buttonCountChanged){
-            int previousButtonCount = activeButtonCount;
-            activeButtonCount = aliveButtonObjects.size();
-            if (!stillInCutscene){
-                updateMultiplier(); //multiplier kept at default value (1) until cutscene is over
-                if (activeButtonCount < 2){
-                    purpleBastard.speak("right that's it you're fired.");
-                    aliveCharacters.add(purpleBastard.revive());
-                    gameOver = true;
-                }
-            }
-
-            switch (activeButtonCount){
-                case 1:
-                    SoundManager.endOverlay();
-                    break;
-                case 2:
-                    if (previousButtonCount == 1) {
-                        SoundManager.startOverlay();
-                    } else if (previousButtonCount == 3){
-                        SoundManager.stopDoingWell();
-                        SoundManager.startOverlay();
-                        SoundManager.startBacking();
-                    }
-                    break;
-                case 3:
-                    if (previousButtonCount == 2){
-                        SoundManager.endBacking();
-                        SoundManager.startDoingWell();
-                    } else if (previousButtonCount == 4){
-                        SoundManager.byePercival();
-                    }
-                    break;
-                case 4:
-                    if (previousButtonCount == 3){
-                        SoundManager.helloPercival();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
+        //update HUD
+        /*
         for (StringObject o: hudObjects){
             o.update();
             if (o.stillAlive()){
                 aliveHUD.add(o);
             }
-        }
+        }*/
+        aliveHUD.add(scoreText);
+
     }
 
     private void laneUpdater(int laneNumber){
@@ -557,21 +475,21 @@ public class Game extends Model{
         }
     }
 
-    private void resetCupcakeSpawnTimer(){
-        cupcakeSpawnTimer = MIN_CUPCAKE_SPAWN_TIME + (int)(Math.random() * RANGE_CUPCAKE_SPAWN_TIME);
+    private void reviveACupcake(){
+        if (canWeSpawnACupcake()){
+            cupcakeAdder((int)(Math.random()*4));
+            resetCupcakeSpawnTimer();
+        }
     }
 
     private boolean canWeSpawnACupcake(){
         return (!cupcakeBotStack.isEmpty());
     }
 
-    private void reviveACupcake(){
-        if (canWeSpawnACupcake()){
-            cupcakeAdder((int)(Math.random()*4));
-            resetCupcakeSpawnTimer();
-            buttonCountChanged = true;
-        }
+    private void resetCupcakeSpawnTimer(){
+        cupcakeSpawnTimer = MIN_CUPCAKE_SPAWN_TIME + (int)(Math.random() * RANGE_CUPCAKE_SPAWN_TIME);
     }
+
 
     private void cupcakeAdder(int lane){
         CupcakeBot tempCupcake = cupcakeBotStack.pop().revive(lane);
@@ -599,14 +517,14 @@ public class Game extends Model{
 
         you.revive();
 
-        activeButtonCount = 0;
-        multiplier = 1;
-
         cutsceneState = 0;
         cutsceneTimer = CUTSCENE_STATE_LENGTH;
         stillInCutscene = true;
 
         gameJustEnded = false;
+
+        gameHasProperlyStarted = false;
+        canUseMuffins = false;
 
         for (int i = 0; i < MAX_CUPCAKE_OBJECTS; i++){
             cupcakeBotStack.push(new CupcakeBot());
@@ -654,98 +572,62 @@ public class Game extends Model{
     }
 
 
-    private void updateMultiplier(){
-        double newMultiplier = 0.8 + (0.1 * activeButtonCount);
-        multiplier = Math.round(newMultiplier * 10)/10.0;
-        setMultiplierDisplay(multiplier);
-    }
-
-    private void setMultiplierDisplay(double valueToShow){
-        multiplierText.showValue(valueToShow);
-    }
-
     private void updateScoreDisplay(){
-        scoreText.showValue(scoreToInt());
+        scoreText.setValue(scoreToInt());
     }
 
     private int scoreToInt(){
         return (int)score;
     }
 
-    private void reviveRipple(ButtonObject sourceButton){
-        if (canWeSpawnARipple()){
-            aliveBackground.add(ripples.pop().revive(sourceButton));
-        }
-    }
-
 
     private void cutsceneHandler(){
         if (cutsceneTimerCheck()){
             switch (cutsceneState){
-                case 0: case 10:
-                    joe.speak("Hello.");
+                case 0:
+                    you.speak("oh no");
                     break;
-                case 1: case 11:
-                    joe.speak("My name is Joe.");
+                case 1:
+                    you.speak("The cupcake mafia has found me");
                     break;
-                case 2: case 12:
-                    joe.speak("And I work in a button factory");
+                case 2:
+                    you.speak("and my muffin machine");
                     break;
-                case 3: case 13:
-                    joe.speak("One day my boss said to me");
-                    aliveCharacters.add(purpleBastard.revive());
+                case 3:
+                    you.speak("If one of their cupcake bots reaches this machine");
                     break;
-                case 4: case 14:
-                    joe.shutIt();
-                    purpleBastard.speak("\"Are you busy, Joe?\"");
+                case 4:
+                    you.speak("I will never be able to eat a muffin again");
                     break;
-                case 5: case 15:
-                    purpleBastard.shutIt();
-                    joe.speak("I said");
+                case 5:
+                    you.speak("But, I can move with the arrow keys to the lane they are coming from");
                     break;
-                case 6: case 16:
-                    joe.speak("\"No.\"");
+                case 6:
+                    you.speak("And then press space to throw a muffin at their robots, destroying it.");
                     break;
                 case 7:
-                    joe.shutIt();
-                    purpleBastard.speak("\"Well then hit this button with your spacebar.\"");
-                    if (canWeSpawnACupcake()){
-                        ButtonObject firstButton = buttonStack.pop().revive(
-                                new Vector2D(HALF_WIDTH,HALF_HEIGHT-50),
-                                new Vector2D(),
-                                30
-                        );
-                        aliveButtonObjects.add(firstButton);
-                        reviveRipple(firstButton);
-                        buttonCountChanged = true;
-                    }
-                    SoundManager.startBacking();
-                    break;
-                case 17:
-                    joe.shutIt();
-                    purpleBastard.speak("\"Well then hit this button with your spacebar.\"");
-                    reviveACupcake();
-                    SoundManager.startOverlay();
+                    you.speak("But, that means I can't eat that muffin.");
                     break;
                 case 8:
-                    purpleBastard.begone();
-                case 18:
-                    purpleBastard.shutIt();
-                    joe.speak("So I hit that button with my spacebar");
+                    you.speak("And I really want to eat it, by pressing space whilst in the middle");
                     break;
                 case 9:
-                    joe.shutIt();
+                    you.speak("Once I've used a muffin, it takes a moment to return");
                     break;
-                case 19:
-                    purpleBastard.speak("keep at least 2 buttons active or imma fire you.");
-                    joe.shutIt();
+                case 10:
+                    you.speak("and I can only hold up to 10 at once.");
                     break;
-                case 20:
-                    purpleBastard.speak("keep at least 2 buttons active or imma fire you.");
+                case 11:
+                    you.speak("Oh dear. They're starting their attack.");
+                    canUseMuffins = true;
+                    break;
+                case 12:
+                    you.speak("YOU'LL NEVER TAKE ME ALIVE!");
+                    reviveACupcake();
+                    gameHasProperlyStarted = true;
                     break;
                 case 21:
-                    purpleBastard.shutIt();
-                    purpleBastard.begone();
+                    you.shutUp();
                     stillInCutscene = false;
                     break;
             }

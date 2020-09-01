@@ -70,8 +70,8 @@ public class StringObject extends GameObject {
         alignment = 0;
         thisString = "";
 
-        //objectColour = Color.WHITE;
-        setPredefinedColour(WHITE_NUM);
+        objectColour = Color.WHITE;
+        //setPredefinedColour(WHITE_NUM);
         theFont = SANS_20;
         areaRectangle = new Rectangle();
         scrolling = false;
@@ -92,7 +92,7 @@ public class StringObject extends GameObject {
     @Override
     public StringObject revive(Vector2D p, Vector2D v) {
         super.revive(p,v);
-        setPredefinedColour(WHITE_NUM);
+        //setPredefinedColour(WHITE_NUM);
         return this;
     }
 
@@ -107,13 +107,6 @@ public class StringObject extends GameObject {
         return setText(s);
     }
 
-    //version of revive() encapsulating setTextAndPredefinedColour()
-    public StringObject revive(String newText, int definedColourValue){
-        revive();
-        setTextAndPredefinedColour(newText, definedColourValue);
-        return this;
-    }
-
     public boolean isClicked(Point p){
         return (areaRectangle.contains(p));
     }
@@ -121,6 +114,17 @@ public class StringObject extends GameObject {
     void setTheFont(Font f){
         theFont = f;
     }
+
+    /*
+
+    //version of revive() encapsulating setTextAndPredefinedColour()
+    public StringObject revive(String newText, int definedColourValue){
+        revive();
+        setTextAndPredefinedColour(newText, definedColourValue);
+        return this;
+    }
+
+
 
 
     public void setPredefinedColour(int definedColourValue){
@@ -164,6 +168,7 @@ public class StringObject extends GameObject {
         setText(newText);
         setPredefinedColour(definedColourValue);
     }
+    */
 
     public void setColour(Color c){ objectColour = c;}
 
@@ -177,7 +182,7 @@ public class StringObject extends GameObject {
             FontMetrics metrics = g.getFontMetrics(g.getFont());
             int w = metrics.stringWidth(thisString);
             int h = metrics.getHeight();
-            int heightOffset = (-h/2);
+            int heightOffset = (h/4);
             int widthOffset;
             switch (alignment){
                 default:
@@ -193,18 +198,20 @@ public class StringObject extends GameObject {
                     widthOffset = -(w/2);
                     break;
             }
-            g.drawString(thisString,widthOffset+1,+1);
-            g.drawString(thisString,widthOffset-1,+1);
-            g.drawString(thisString,widthOffset-1,-1);
-            g.drawString(thisString,widthOffset+1,-1);
+            g.drawString(thisString,widthOffset+1,heightOffset+1);
+            g.drawString(thisString,widthOffset-1,heightOffset+1);
+            g.drawString(thisString,widthOffset-1,heightOffset-1);
+            g.drawString(thisString,widthOffset+1,heightOffset-1);
             g.setColor(objectColour);
-            g.drawString(thisString,widthOffset,0);
+            g.drawString(thisString,widthOffset,heightOffset);
             g.setFont(tempFont);
-            areaRectangle = new Rectangle((int)position.x - (w/2), (int)position.y + heightOffset,w,h);
+            areaRectangle = new Rectangle((int)position.x - (w/2), (int)position.y - heightOffset,w,h);
         }
     }
 
     public StringObject setText(String s){ thisString = s; return this;}
+
+    public Rectangle getAreaRectangle(){ return areaRectangle;}
 
 
 

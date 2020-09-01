@@ -13,6 +13,7 @@ public class View extends JComponent {
 
     private Model model;
 
+    /*
     private static Image bg;
     static {
         try {
@@ -20,6 +21,7 @@ public class View extends JComponent {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
+     */
 
     private boolean displayingModel;
 
@@ -49,7 +51,7 @@ public class View extends JComponent {
             model.draw(g);
         } else{
             AffineTransform backup = g.getTransform();
-            g.drawImage(bg,backup,null);
+            //g.drawImage(bg,backup,null);
         }
         g.setTransform(initialTransform);
         revalidate();

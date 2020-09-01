@@ -26,22 +26,22 @@ public class SoundManager {
     //actually obtaining the clips
 
     //sfx
-    private final static Clip clap = getClip("clap");
-    private final static Clip pink = getClip("pink");
-    private final static Clip blue = getClip("blue");
-    private final static Clip ba = getClip("ba");
-    private final static Clip happyToot = getClip("happy toot");
-    private final static Clip sadToot = getClip("sad toot");
-    private final static Clip newToot = getClip("new toot");
-    private final static Clip du = getClip("du");
+    //private final static Clip clap = getClip("clap");
+    //private final static Clip pink = getClip("pink");
+    //private final static Clip blue = getClip("blue");
+    //private final static Clip ba = getClip("ba");
+    //private final static Clip happyToot = getClip("happy toot");
+    //private final static Clip sadToot = getClip("sad toot");
+    //private final static Clip newToot = getClip("new toot");
+    //private final static Clip du = getClip("du");
 
     //music
-    private final static Clip backingLoop = getClip("backing loop");
-    private final static Clip reverbLoop = getClip("reverb backing loop");
-    private final static Clip secondLoop = getClip("the second loop");
-    private final static Clip thirdLoop = getClip("loop the third");
-    private final static Clip fourthLoop = getClip("loop number four");
-    private final static Clip resultsLoop = getClip("results loop");
+    //private final static Clip backingLoop = getClip("backing loop");
+    //private final static Clip reverbLoop = getClip("reverb backing loop");
+    //private final static Clip secondLoop = getClip("the second loop");
+    //private final static Clip thirdLoop = getClip("loop the third");
+    //private final static Clip fourthLoop = getClip("loop number four");
+    //private final static Clip resultsLoop = getClip("results loop");
 
     //recording whether or not these are looping
     private static boolean backingLooping = false;

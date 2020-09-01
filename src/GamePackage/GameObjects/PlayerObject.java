@@ -13,17 +13,18 @@ public class PlayerObject extends GameObject {
 
     private final Controller controller;
 
+    /*
     private static final Vector2D[] STATE_POSITIONS = {
             new Vector2D(HALF_WIDTH,HALF_HEIGHT-64),
             new Vector2D(HALF_WIDTH+64, HALF_HEIGHT),
             new Vector2D(HALF_WIDTH, HALF_HEIGHT+64),
             new Vector2D(HALF_WIDTH-64, HALF_HEIGHT),
             new Vector2D(HALF_WIDTH,HALF_HEIGHT)
-    };
+    };*/
 
     private int currentState;
 
-    private static final int MUFFIN_COOLDOWN_LENGTH = 20;
+    private static final int MUFFIN_COOLDOWN_LENGTH = 50;
     private int muffinTimer;
     private static final int MUFFIN_COOLDOWN_ARC_SEGMENT = 360/MUFFIN_COOLDOWN_LENGTH;
     private int muffinArcAngle;
@@ -50,17 +51,34 @@ public class PlayerObject extends GameObject {
 
     private final AttributeStringObject<Integer> muffinCountText;
 
+    private final StringObject speechText;
+    private boolean showingSpeech;
+    private static final int SPEECH_TIMER_LENGTH = 50;
+    private int speechTimer;
+
     private boolean usedMuffin;
 
+    private final Image muffinMachineImage;
+
+    private final Image muffineMachineStatusImage;
+
+    private static final int[][] STATUS_SPRITESHEET_COORDS = {
+            {0,0,56,16},
+            {0,16,56,32}
+    };
+    //X: state [0]: alive [1]: dead
+    //Y: [0]: sx1 [1]: sy1 [2]: sx2 [3]: sy2
+
     public PlayerObject(Controller c){
-        super(STATE_POSITIONS[MID_INT], new Vector2D());
+        super(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D());
         controller = c;
         this.alive = true;
         this.img = ImageManager.getImage("PlayerSpritesheet");
         this.currentState = MID_INT;
         usedMuffin = false;
-        muffinCount = MAX_MUFFINS;
-        showTimerAsArc = false;
+        muffinCount = 0;
+        muffinTimer = MUFFIN_COOLDOWN_LENGTH;
+        showTimerAsArc = true;
         muffinCountText = new AttributeStringObject<>(
                 new Vector2D(64, 64),
                 new Vector2D(),
@@ -69,106 +87,138 @@ public class PlayerObject extends GameObject {
                 StringObject.MIDDLE_ALIGN,
                 StringObject.SANS_30
         );
+        speechText = new StringObject(
+                new Vector2D(0,-128),
+                new Vector2D(),
+                "",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_20
+        );
+        showingSpeech = false;
+
+        this.muffinMachineImage = ImageManager.getImage("MuffinMachine");
+        this.muffineMachineStatusImage = ImageManager.getImage("MachineStatus");
     }
 
     public PlayerObject revive(){
         super.revive();
         this.currentState = MID_INT;
         usedMuffin = false;
-        muffinCount = MAX_MUFFINS;
-        showTimerAsArc = false;
+        muffinCount = 0;
+        muffinTimer = MUFFIN_COOLDOWN_LENGTH;
+        showTimerAsArc = true;
+        showingSpeech = false;
         updateMuffinCountText();
+        this.alive = true;
         return this;
     }
 
     @Override
     void individualUpdate() {
-        Action a = controller.getAction();
 
-        if (a.checkForDirectionalInput()){
-            int directionToGo = a.getDirectionalInput();
-            if (directionToGo != currentState) {
-                switch (directionToGo) {
-                    case UP_INT:
-                        switch (currentState) {
-                            case RIGHT_INT:
-                            case LEFT_INT:
-                            case MID_INT:
-                                this.currentState = directionToGo;
-                                break;
-                            case DOWN_INT:
-                                this.currentState = MID_INT;
-                                break;
-                        }
-                        break;
-                    case RIGHT_INT:
-                        switch (currentState) {
-                            case UP_INT:
-                            case DOWN_INT:
-                            case MID_INT:
-                                this.currentState = directionToGo;
-                                break;
-                            case LEFT_INT:
-                                this.currentState = MID_INT;
-                                break;
-                        }
-                        break;
-                    case DOWN_INT:
-                        switch (currentState) {
-                            case RIGHT_INT:
-                            case LEFT_INT:
-                            case MID_INT:
-                                this.currentState = directionToGo;
-                                break;
-                            case UP_INT:
-                                this.currentState = MID_INT;
-                                break;
-                        }
-                        break;
-                    case LEFT_INT:
-                        switch (currentState) {
-                            case UP_INT:
-                            case DOWN_INT:
-                            case MID_INT:
-                                this.currentState = directionToGo;
-                                break;
-                            case RIGHT_INT:
-                                this.currentState = MID_INT;
-                                break;
-                        }
-                        break;
+        if(this.alive) {
+            //only does this stuff if alive
+
+            //obtains the current frame action
+            Action a = controller.getAction();
+
+            //respond appropriately to directional input
+            if (a.checkForDirectionalInput()) {
+                int directionToGo = a.getDirectionalInput();
+                if (directionToGo != currentState) {
+                    switch (directionToGo) {
+                        case UP_INT:
+                            switch (currentState) {
+                                case RIGHT_INT:
+                                case LEFT_INT:
+                                case MID_INT:
+                                    this.currentState = directionToGo;
+                                    break;
+                                case DOWN_INT:
+                                    this.currentState = MID_INT;
+                                    break;
+                            }
+                            break;
+                        case RIGHT_INT:
+                            switch (currentState) {
+                                case UP_INT:
+                                case DOWN_INT:
+                                case MID_INT:
+                                    this.currentState = directionToGo;
+                                    break;
+                                case LEFT_INT:
+                                    this.currentState = MID_INT;
+                                    break;
+                            }
+                            break;
+                        case DOWN_INT:
+                            switch (currentState) {
+                                case RIGHT_INT:
+                                case LEFT_INT:
+                                case MID_INT:
+                                    this.currentState = directionToGo;
+                                    break;
+                                case UP_INT:
+                                    this.currentState = MID_INT;
+                                    break;
+                            }
+                            break;
+                        case LEFT_INT:
+                            switch (currentState) {
+                                case UP_INT:
+                                case DOWN_INT:
+                                case MID_INT:
+                                    this.currentState = directionToGo;
+                                    break;
+                                case RIGHT_INT:
+                                    this.currentState = MID_INT;
+                                    break;
+                            }
+                            break;
+                    }
+                    altFrameTimer = 0; //reset the altFrameTimer
                 }
 
-                altFrameTimer = 0;
-                this.position.set(STATE_POSITIONS[currentState]);
+            }
+
+            //update muffinTimer and such if player doesn't have max muffins
+            if (muffinCount < MAX_MUFFINS) {
+                showTimerAsArc = true;
+                if (muffinTimer > 0) {
+                    muffinTimer--;
+                } else {
+                    muffinCount++;
+                    muffinTimer = MUFFIN_COOLDOWN_LENGTH;
+                    //double-check whether or not the muffin timer still needs to be shown as an arc
+                    showTimerAsArc = (muffinCount < MAX_MUFFINS);
+                    updateMuffinCountText();
+                }
+                //update the angle for the muffin timer
+                muffinArcAngle = 360 - (muffinTimer * MUFFIN_COOLDOWN_ARC_SEGMENT);
+            }
+
+            //use a muffin if the spacebar is pressed
+            if (muffinCount > 0) {
+                if (a.checkForSpacePress()) {
+                    usedMuffin = true;
+                    //muffinCount--;
+                    //altFrameTimer = ALT_FRAME_LENGTH;
+                }
             }
 
         }
 
-        if (altFrameTimer > 0){
+        //count down the altFrameTimer if it's above 0
+        if (altFrameTimer > 0) {
             altFrameTimer--;
         }
 
 
-        if (muffinCount < MAX_MUFFINS){
-            showTimerAsArc = true;
-            if (muffinTimer > 0){
-                muffinTimer--;
-            } else {
-                muffinCount++;
-                muffinTimer = MUFFIN_COOLDOWN_LENGTH;
-                showTimerAsArc = (muffinCount < MAX_MUFFINS);
-                updateMuffinCountText();
-            }
-            muffinArcAngle = 360-(muffinTimer*MUFFIN_COOLDOWN_ARC_SEGMENT);
-        }
-
-        if (muffinCount > 0){
-            if(a.checkForSpacePress()){
-                usedMuffin = true;
-                //muffinCount--;
-                //altFrameTimer = ALT_FRAME_LENGTH;
-            }
+        //decrease the speech timer if it's currently showing speech
+        if (showingSpeech){
+            speechTimer--;
+            //check if it's still supposed to be showing speech
+            showingSpeech = (speechTimer > 0);
         }
 
     }
@@ -180,9 +230,75 @@ public class PlayerObject extends GameObject {
 
     @Override
     void renderObject(Graphics2D g) {
+
+        //draw muffin machine
+        g.drawImage(
+                muffinMachineImage,
+                -96,
+                -96,
+                192,
+                192,
+                null
+        );
+
+        //draw the appropriate status indicator for the muffin machine
+        if (alive){
+            g.drawImage(
+                    muffineMachineStatusImage,
+                    36,
+                    -72,
+                    92,
+                    -56,
+                    STATUS_SPRITESHEET_COORDS[0][0],
+                    STATUS_SPRITESHEET_COORDS[0][1],
+                    STATUS_SPRITESHEET_COORDS[0][2],
+                    STATUS_SPRITESHEET_COORDS[0][3],
+                    null
+            );
+
+            //draw the timer shape (if still alive ofc)
+            g.setColor(Color.white);
+            if(showTimerAsArc) {
+                //show an arc for the timer if it's supposed to be shown as an arc (not full)
+                g.fillArc(
+                        -88,
+                        40,
+                        48,
+                        48,
+                        90,
+                        muffinArcAngle
+                );
+            } else{
+                //just draw it as a full circle if the timer is full
+                g.fillOval(
+                        -88,
+                        40,
+                        48,
+                        48
+                );
+            }
+
+        } else{
+            //draw the broken machine image if it's dead
+            g.drawImage(
+                    muffineMachineStatusImage,
+                    36,
+                    -72,
+                    92,
+                    -56,
+                    STATUS_SPRITESHEET_COORDS[1][0],
+                    STATUS_SPRITESHEET_COORDS[1][1],
+                    STATUS_SPRITESHEET_COORDS[1][2],
+                    STATUS_SPRITESHEET_COORDS[1][3],
+                    null
+            );
+            //don't bother with the timer
+        }
+
         int framePos = 0;
         if (altFrameTimer > 0){ framePos = 1;}
 
+        //draw the player
         g.drawImage(
                 img,
                 PLAYER_SPRITESHEET_COORDS[currentState][framePos][0],
@@ -196,30 +312,14 @@ public class PlayerObject extends GameObject {
                 null
         );
 
-        g.setColor(Color.white);
-
-        if(showTimerAsArc) {
-            //show an arc for the timer if it's supposed to be shown as an arc (not full)
-            g.fillArc(
-                    -88,
-                    40,
-                    48,
-                    48,
-                    -90,
-                    muffinArcAngle
-            );
-        } else{
-            //just draw it as a full circle if the timer is full
-            g.fillOval(
-                    -88,
-                    40,
-                    48,
-                    48
-            );
-        }
 
         //draw the muffinCountString object
         muffinCountText.draw(g);
+
+        //show speechText (if appropriate)
+        if (showingSpeech){
+            speechText.draw(g);
+        }
     }
 
     public boolean checkIfUsedMuffin(){
@@ -244,5 +344,21 @@ public class PlayerObject extends GameObject {
         muffinCount--;
         updateMuffinCountText();
         altFrameTimer = ALT_FRAME_LENGTH;
+    }
+
+    public void speak(String s){
+        this.speechText.setText(s);
+        showingSpeech = true;
+        speechTimer = SPEECH_TIMER_LENGTH;
+    }
+
+    public PlayerObject kill(){
+        this.alive = false; //this is dead
+        this.speak("no! my muffins!");
+        return this;
+    }
+
+    public void shutUp(){
+        showingSpeech = false;
     }
 }

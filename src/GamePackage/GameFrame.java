@@ -12,7 +12,7 @@ public class GameFrame extends JFrame {
     private Component comp;
 
     public GameFrame() {
-        this.setTitle("The Button Factory");
+        this.setTitle("Muffin Mania");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 

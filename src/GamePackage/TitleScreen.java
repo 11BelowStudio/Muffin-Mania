@@ -1,15 +1,16 @@
 package GamePackage;
 
-import GamePackage.GameObjects.BackgroundRippleObject;
+import GamePackage.GameObjects.BackgroundMuffinObject;
+import GamePackage.GameObjects.GameObject;
 import GamePackage.GameObjects.StringObject;
 import utilities.TextAssetReader;
 import utilities.HighScoreHandler;
-import utilities.SoundManager;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static GamePackage.Constants.*;
 
@@ -22,8 +23,17 @@ public class TitleScreen extends Model {
     private static final int START_GAME_STATE = 3;
 
 
-    private static final int RIPPLE_CHANCES = 1024;
-    private int rippleTimer;
+    private static final int MUFFIN_CHANCES = 1024;
+    private int muffinTimer;
+
+    private final List<BackgroundMuffinObject> bgMuffins;
+    private final List<BackgroundMuffinObject> bgAliveMuffins;
+
+    private final Stack<BackgroundMuffinObject> bgMuffinStack;
+
+    private final List<StringObject> hudObjects;
+
+    private final List<StringObject> aliveHUD;
 
     private final List<StringObject> menuScreenStringObjects;
     private final StringObject titleText;
@@ -42,15 +52,18 @@ public class TitleScreen extends Model {
     public TitleScreen(Controller ctrl, HighScoreHandler hs) {
         super(ctrl, hs);
 
+        hudObjects = new ArrayList<>();
+        aliveHUD = new ArrayList<>();
+
         //collection to hold menu screen stringobjects
         menuScreenStringObjects = new ArrayList<>();
 
         //declaring the stringobjects for the menu screen
-        titleText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT/2),new Vector2D(),"The Button Factory",StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS);
-        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,5*(HALF_HEIGHT/8)), new Vector2D(),"A game about buttons",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
-        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
-        showScores = new StringObject(new Vector2D(HALF_WIDTH,5*(HALF_HEIGHT/4)),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
-        showCredits = new StringObject(new Vector2D(HALF_WIDTH,3*(HALF_HEIGHT/2)),new Vector2D(),"*Show Credits*",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
+        titleText = new StringObject(new Vector2D(HALF_WIDTH,QUARTER_HEIGHT),new Vector2D(),"Muffin Mania",StringObject.MIDDLE_ALIGN,StringObject.SANS_60);
+        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,QUARTER_HEIGHT + SIXTEENTH_HEIGHT), new Vector2D(),"Tactical Muffin Action",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
+        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
+        showScores = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT + EIGHTH_HEIGHT),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
+        showCredits = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT + QUARTER_HEIGHT),new Vector2D(),"*Show Credits*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
         //adding these to the collection of them
         menuScreenStringObjects.add(titleText);
         menuScreenStringObjects.add(subtitleText);
@@ -59,6 +72,34 @@ public class TitleScreen extends Model {
         menuScreenStringObjects.add(showCredits);
 
         scrollingTextToAdd = new ArrayList<>();
+
+        bgMuffins = new ArrayList<>();
+        bgAliveMuffins = new ArrayList<>();
+        bgMuffinStack = new Stack<>();
+    }
+
+    @Override
+    void drawModel(Graphics2D g) {
+        //draw the muffins
+        for (BackgroundMuffinObject m: bgMuffins){
+            m.draw(g);
+        }
+        for (StringObject o : hudObjects) {
+            o.draw(g);
+            //g.draw(o.getAreaRectangle());
+            //and then the HUD (so its displayed above the game objects)
+        }
+    }
+
+    @Override
+    void refreshModelLists() {
+        hudObjects.clear();
+        hudObjects.addAll(aliveHUD);
+        aliveHUD.clear();
+
+        bgMuffins.clear();
+        bgMuffins.addAll(bgAliveMuffins);
+        bgAliveMuffins.clear();
     }
 
     @Override
@@ -68,18 +109,18 @@ public class TitleScreen extends Model {
     }
 
     void startModelMusic(){
-        SoundManager.startMenu();
+        //SoundManager.startMenu();
     }
 
     void stopModelMusic(){
-        SoundManager.stopMenu();
+        //SoundManager.stopMenu();
     }
 
     @Override
     void setupModel() {
-        rippleTimer = 0;
+        muffinTimer = 0;
         for (int i = 0; i < 50; i++) {
-            ripples.push(new BackgroundRippleObject());
+            bgMuffinStack.push(new BackgroundMuffinObject());
         }
 
 
@@ -105,16 +146,21 @@ public class TitleScreen extends Model {
     }
 
     @Override
+    void clearModelCollections() {
+
+    }
+
+    @Override
     void updateLoop() {
 
         boolean titleScreenStateHasChanged = false;
 
-        for (BackgroundRippleObject o: backgroundObjects) {
+        for (BackgroundMuffinObject o: bgMuffins) {
             o.update();
             if (o.stillAlive()){
-                aliveBackground.add(o);
+                bgAliveMuffins.add(o);
             } else{
-                ripples.push(o);
+                bgMuffinStack.push(o);
             }
         }
 
@@ -126,11 +172,11 @@ public class TitleScreen extends Model {
         }
 
 
-        if (Math.random()*RIPPLE_CHANCES < rippleTimer && canWeSpawnARipple()){
-            aliveBackground.add(ripples.pop().revive());
-            rippleTimer = 0;
+        if (Math.random()* MUFFIN_CHANCES < muffinTimer && canWeSpawnAMuffin()){
+            bgAliveMuffins.add(bgMuffinStack.pop().revive());
+            muffinTimer = 0;
         } else{
-            rippleTimer++;
+            muffinTimer++;
         }
 
         Action currentAction = ctrl.getAction();
@@ -147,9 +193,9 @@ public class TitleScreen extends Model {
                     Point clickPoint = currentAction.getClickLocation();
                     System.out.println(clickPoint);
                     if (titleText.isClicked(clickPoint)){
-                        SoundManager.whoIsJoe();
+                        //SoundManager.whoIsJoe();
                     } else if (subtitleText.isClicked(clickPoint)){
-                        SoundManager.discussion();
+                        //SoundManager.discussion();
                     } else if (play.isClicked(clickPoint)){
                         titleScreenState = START_GAME_STATE;
                         titleScreenStateHasChanged = true;
@@ -219,6 +265,10 @@ public class TitleScreen extends Model {
                 endThis();
                 break;
         }
+    }
+
+    private boolean canWeSpawnAMuffin(){
+        return (!bgMuffinStack.isEmpty());
     }
 
 }
