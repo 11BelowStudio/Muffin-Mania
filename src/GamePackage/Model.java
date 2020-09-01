@@ -174,13 +174,6 @@ public abstract class Model {
     void clearCollections(){
         refreshLists();
         clearModelCollections();
-        /*
-        backgroundObjects.clear();
-        buttonObjects.clear();
-        characterObjects.clear();
-        hudObjects.clear();
-        ripples.clear();
-        */
     }
 
     abstract void clearModelCollections();

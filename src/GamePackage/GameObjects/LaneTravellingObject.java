@@ -41,7 +41,7 @@ public abstract class LaneTravellingObject extends GameObject {
         return (this.lane == other.getLane());
     }
 
-    boolean hasReachedDestination(){
+    public boolean hasReachedDestination(){
         if (distanceLeft <= 0){
             this.alive = false;
             return true;
