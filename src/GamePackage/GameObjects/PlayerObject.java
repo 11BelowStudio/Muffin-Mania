@@ -70,7 +70,7 @@ public class PlayerObject extends GameObject {
     //Y: [0]: sx1 [1]: sy1 [2]: sx2 [3]: sy2
 
     public PlayerObject(Controller c){
-        super(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D());
+        super(MID_VECTOR, new Vector2D());
         controller = c;
         this.alive = true;
         this.img = ImageManager.getImage("PlayerSpritesheet");

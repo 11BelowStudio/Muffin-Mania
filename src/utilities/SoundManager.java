@@ -22,6 +22,7 @@ public class SoundManager {
     private final static String path = "resources/";
 
 
+    //TODO: audio
 
     //actually obtaining the clips
 

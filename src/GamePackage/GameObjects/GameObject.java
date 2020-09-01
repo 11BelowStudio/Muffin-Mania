@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-import static GamePackage.Constants.DT;
+import static GamePackage.Constants.*;
 
 public abstract class GameObject {
     boolean alive;
@@ -33,6 +33,8 @@ public abstract class GameObject {
     static final double DOWN_RADIANS = Math.toRadians(90);
     static final double LEFT_RADIANS = Math.toRadians(180);
     static final double UP_RADIANS = Math.toRadians(270);
+
+    static final Vector2D MID_VECTOR = new Vector2D(HALF_WIDTH,HALF_HEIGHT);
 
 
     //safety orange: #e97600

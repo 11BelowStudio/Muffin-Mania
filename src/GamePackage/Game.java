@@ -63,14 +63,14 @@ public class Game extends Model{
 
     private int cupcakeSpawnTimer;
     private static final int MIN_CUPCAKE_SPAWN_TIME = 25; //5
-    private static final int RANGE_CUPCAKE_SPAWN_TIME = 65; //25
+    private static final int RANGE_CUPCAKE_SPAWN_TIME = 85; //25
 
     private static final int MAX_MUFFIN_OBJECTS = 15;
     private static final int MAX_CUPCAKE_OBJECTS = 15;
 
     private boolean gameJustEnded;
 
-    private Image background;
+    private final Image background;
 
 
 

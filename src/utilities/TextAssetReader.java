@@ -11,6 +11,8 @@ public class TextAssetReader {
     final static String path = "/ThingsThatAreNotCode/text/";
     final static String extension = ".txt";
 
+    //TODO: write intro crawl
+    //TODO: write credits
     private final static ArrayList<String> OPENING_TEXT = fileToStringArrayList("IntroCrawlText");
     private final static ArrayList<String> CREDITS_TEXT = fileToStringArrayList("credits");
 
