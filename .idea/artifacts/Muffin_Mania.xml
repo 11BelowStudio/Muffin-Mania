@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Muffin Mania">
+    <output-path>$PROJECT_DIR$/out/artifacts/Muffin_Mania</output-path>
+    <root id="archive" name="Muffin Mania.jar">
+      <element id="module-output" name="Muffin Mania" />
+    </root>
+  </artifact>
+</component>

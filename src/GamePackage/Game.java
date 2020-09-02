@@ -279,8 +279,8 @@ public class Game extends Model{
                             score += 1;
                             score += muffinStreak;
                             updateScoreDisplay();
-                            //then increase the muffinStreak modifier by 0.5
-                            muffinStreak += 0.5;
+                            //then increase the muffinStreak modifier by 0.75
+                            muffinStreak += 0.75;
                             //don't forget to play the noise
                             SoundManager.playEatingNoise();
                             break;

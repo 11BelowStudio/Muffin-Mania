@@ -1,2 +1,59 @@
-bruh
-moment
+MUFFIN MANIA
+
+A game by 11BelowStudio
+
+Made for no particular reason tbh
+
+
+
+* DESIGN*
+
+Designed by 11BelowStudio
+
+Partially inspired by asdfmovie5 (TomSka, 2012)
+
+
+
+* VISUALS *
+
+Visuals by 11BelowStudio
+
+Produced using Paint.NET
+
+CupcakeBot sprite inspired by
+the cupcake from FNAF (Scott Cawthon, 2014)
+
+
+
+* AUDIO *
+
+Audio by 11BelowStudio
+
+Produced using Audacity
+
+
+
+* PROGRAMMING *
+
+Programmed by 11BelowStudio
+
+Written in vanilla Java 8
+
+Built from some sample code
+provided by Dr. Dimitri Ognibene
+
+Code to include the images in the .jar
+by JB Nizet on StackOverflow
+(https://stackoverflow.com/a/8362018)
+
+Code to include some text in the .jar
+by Drew MacInnis on StackOverflow
+(https://stackoverflow.com/a/20389418)
+
+Wrapped as an .exe using Launch4j
+
+
+
+AND THAT'S ALL THE CREDITS
+
+press space if you want to return to the menu.
