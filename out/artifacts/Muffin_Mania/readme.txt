@@ -1,4 +1,4 @@
-# Muffin-Mania
+# Muffin Mania
 A game about eating muffins.
 
 Made for no particular reason by 11BelowStudio
