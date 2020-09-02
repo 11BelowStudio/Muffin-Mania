@@ -120,16 +120,16 @@ public class HighScoreHandler {
             //a very rewarding message if the player has a score in the top 5 scores
             scoreMessage ="<h1>Congratulations!</h1>"
                     +"<p>Your score is number "+ yourPos +" on the leaderboard!</p>"
-                    +"<p>However, you still lost. Fs have been entered into chat.</p>"
-                    +"<p>Your score was: " + newScore + "</p>"
-                    +"<p><br>Please enter your name, so it can be recorded on the leaderboard.</p>";
+                    +"<p>However, you still lost.</p>"
+                    +"<p>You ate " + newScore + " muffins</p>"
+                    +"<p><br>Please enter your name, so your score can be recorded.</p>";
 
         } else{
             //less rewarding message if the player did not get a high score.
-            scoreMessage = "<h1>congrats u lost lol</h1>"
-                    +"<p>your score: " + newScore + "</p>"
-                    +"<p>your position: " + yourPos + "</p>"
-                    +"<p><br>Please enter your name, so it can be recorded on the leaderboard.</p>";
+            scoreMessage = "<h1>You lost!</h1>"
+                    +"<p>You ate " + newScore + " muffins.</p>"
+                    +"<p>You are at position " + yourPos + " on the leaderboard.</p>"
+                    +"<p><br>Please enter your name, so your score can be recorded.</p>";
         }
 
         String scoreName;

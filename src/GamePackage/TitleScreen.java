@@ -51,6 +51,10 @@ public class TitleScreen extends Model {
 
     private final static ArrayList<String> CREDITS_TEXT = TextAssetReader.getCreditsText();
 
+    private static final int INTRO_SCROLL_SPEED = 25;
+    private static final int LEADERBOARD_SCROLL_SPEED = 50;
+    private static final int CREDITS_SCROLL_SPEED = 50;
+
 
     public TitleScreen(Controller ctrl, HighScoreHandler hs) {
         super(ctrl, hs);
@@ -135,7 +139,7 @@ public class TitleScreen extends Model {
         }
         for (StringObject o : hudObjects) {
             o.draw(g);
-            g.draw(o.getAreaRectangle());
+            //g.draw(o.getAreaRectangle());
             //and then the HUD (so its displayed above the game objects)
         }
     }
@@ -175,7 +179,7 @@ public class TitleScreen extends Model {
 
         //titleScreenStateHasChanged = false;
 
-        createScrollingText(OPENING_TEXT, 30, 25);
+        createScrollingText(OPENING_TEXT, 30, INTRO_SCROLL_SPEED);
         titleScreenState = SETTING_UP_SCROLLING_TEXT_STATE;
         titleScreenStateChangeHandler();
 
@@ -249,10 +253,10 @@ public class TitleScreen extends Model {
                         titleScreenState = START_GAME_STATE;
                         titleScreenStateHasChanged = true;
                     } else if (showScores.isClicked(clickPoint)){
-                        createScrollingText(hs.StringArrayListLeaderboard(), 30, 50);
+                        createScrollingText(hs.StringArrayListLeaderboard(), 30, LEADERBOARD_SCROLL_SPEED);
                         titleScreenStateHasChanged = true;
                     } else if (showCredits.isClicked(clickPoint)){
-                        createScrollingText(CREDITS_TEXT, 30, 50);
+                        createScrollingText(CREDITS_TEXT, 30, CREDITS_SCROLL_SPEED);
                         titleScreenStateHasChanged = true;
                     } else if (quitText.isClicked(clickPoint)){
                         quitText.cycleColours();

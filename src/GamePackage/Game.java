@@ -58,7 +58,6 @@ public class Game extends Model{
     private final int CUTSCENE_STATE_LENGTH = 50;
     private boolean stillInCutscene;
 
-    private boolean canUseMuffins;
     private boolean gameHasProperlyStarted;
 
     private int cupcakeSpawnTimer;
@@ -529,7 +528,6 @@ public class Game extends Model{
         gameJustEnded = false;
 
         gameHasProperlyStarted = false;
-        canUseMuffins = false;
 
         for (int i = 0; i < MAX_CUPCAKE_OBJECTS; i++){
             cupcakeBotStack.push(new CupcakeBot());
@@ -593,13 +591,13 @@ public class Game extends Model{
                     you.speak("oh no");
                     break;
                 case 1:
-                    you.speak("The cupcake mafia has found me");
+                    you.speak("The Cupcake Cult has found me");
                     break;
                 case 2:
-                    you.speak("and my muffin machine");
+                    you.speak("and my Muffin Machine");
                     break;
                 case 3:
-                    you.speak("If one of their cupcake bots reaches this machine");
+                    you.speak("If one of their CupcakeBots reach this machine");
                     break;
                 case 4:
                     you.speak("I will never be able to eat a muffin again");
@@ -608,35 +606,38 @@ public class Game extends Model{
                     you.speak("But, I can move to the lane they are coming from");
                     break;
                 case 6:
-                    you.speak("by using the arrow keys, and attack their robots");
+                    you.speak("by using the arrow keys, and then defend myself");
                     break;
                 case 7:
-                    you.speak("by then pressing space to throw a muffin.");
+                    you.speak("by pressing space to throw a muffin.");
                     break;
                 case 8:
                     you.speak("But, that means I can't eat that muffin.");
                     break;
                 case 9:
-                    you.speak("And I really want to eat it, by pressing space whilst in the middle");
+                    you.speak("And I really want to eat my muffins,");
                     break;
                 case 10:
-                    you.speak("Once I've used a muffin, it takes a moment to return");
+                    you.speak("by pressing space whilst I'm in the middle");
                     break;
                 case 11:
-                    you.speak("and I can only hold up to 10 at once.");
+                    you.speak("Once I've used a muffin, it takes a moment to be replaced.");
                     break;
                 case 12:
+                    you.speak("and I can only hold up to 10 at once.");
+                    break;
+                case 13:
                     you.speak("Oh dear. They're starting their attack.");
                     gameHasProperlyStarted = true;
                     SoundManager.endIntroLoop();
                     break;
-                case 13:
+                case 14:
                     you.speak("YOU'LL NEVER TAKE ME ALIVE!");
                     //gameHasProperlyStarted = true;
                     SoundManager.playFanfare();
                     SoundManager.startGameLoop();
                     break;
-                case 14:
+                case 15:
                     you.shutUp();
                     stillInCutscene = false;
                     break;
