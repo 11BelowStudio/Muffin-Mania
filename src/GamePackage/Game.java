@@ -221,7 +221,9 @@ public class Game extends Model{
         return this;
     }
 
-    void startModelMusic(){ }
+    void startModelMusic(){
+        SoundManager.startIntroLoop();
+    }
 
     void stopModelMusic(){  }
 
@@ -252,7 +254,8 @@ public class Game extends Model{
 
                 //pretty much kills 'you' and stops the muffin machine from doing its thing
                 you.kill();
-
+                //ends the game music loop
+                SoundManager.endGameLoop();
                 gameJustEnded = false;
             }
 
@@ -272,16 +275,15 @@ public class Game extends Model{
                     int lane = you.getCurrentState();
                     switch (lane) {
                         case MID_INT:
-                            //don't allow user to eat muffins until the game has properly started
-                            if (gameHasProperlyStarted) {
-                                //if you're at mid, confirm the muffin usage, increase the score by 1, apply muffinStreak to the score, update score display
-                                you.confirmMuffinUsage();
-                                score += 1;
-                                score += muffinStreak;
-                                updateScoreDisplay();
-                                //then increase the muffinStreak modifier by 0.5
-                                muffinStreak += 0.5;
-                            }
+                            //if you're at mid, confirm the muffin usage, increase the score by 1, apply muffinStreak to the score, update score display
+                            you.confirmMuffinUsage();
+                            score += 1;
+                            score += muffinStreak;
+                            updateScoreDisplay();
+                            //then increase the muffinStreak modifier by 0.5
+                            muffinStreak += 0.5;
+                            //don't forget to play the noise
+                            SoundManager.playEatingNoise();
                             break;
                         case UP_INT:
                         case RIGHT_INT:
@@ -306,14 +308,6 @@ public class Game extends Model{
             }
         }
 
-        //update HUD
-        /*
-        for (StringObject o: hudObjects){
-            o.update();
-            if (o.stillAlive()){
-                aliveHUD.add(o);
-            }
-        }*/
         aliveHUD.add(scoreText);
 
     }
@@ -372,6 +366,9 @@ public class Game extends Model{
                     //kill both of them if they hit each other
                     cupcakes[i].kill();
                     muffins[i].kill();
+                    //play the hit noise
+                    SoundManager.playBotHit();
+
                     //move to the next pair
                     i++;
                     notDone = (i < smallestCount);
@@ -473,6 +470,8 @@ public class Game extends Model{
                     lAliveMuffins.add(tempMuffin);
                     break;
             }
+            //play the noise of throwing a muffin
+            SoundManager.playThrow();
         }
     }
 
@@ -494,18 +493,23 @@ public class Game extends Model{
 
     private void cupcakeAdder(int lane){
         CupcakeBot tempCupcake = cupcakeBotStack.pop().revive(lane);
+        //add the cupcake to the appropriate lane, and play the appropriate spawning noise
         switch (lane){
             case UP_INT:
                 tAliveCupcakes.add(tempCupcake);
+                SoundManager.playUpBot();
                 break;
             case RIGHT_INT:
                 rAliveCupcakes.add(tempCupcake);
+                SoundManager.playRightBot();
                 break;
             case DOWN_INT:
                 bAliveCupcakes.add(tempCupcake);
+                SoundManager.playDownBot();
                 break;
             case LEFT_INT:
                 lAliveCupcakes.add(tempCupcake);
+                SoundManager.playLeftBot();
                 break;
         }
     }
@@ -624,10 +628,13 @@ public class Game extends Model{
                 case 12:
                     you.speak("Oh dear. They're starting their attack.");
                     gameHasProperlyStarted = true;
+                    SoundManager.endIntroLoop();
                     break;
                 case 13:
                     you.speak("YOU'LL NEVER TAKE ME ALIVE!");
                     //gameHasProperlyStarted = true;
+                    SoundManager.playFanfare();
+                    SoundManager.startGameLoop();
                     break;
                 case 14:
                     you.shutUp();

@@ -19,7 +19,28 @@ public class SoundManager {
 
 
     // this may need modifying
-    private final static String path = "resources/audio";
+    private final static String path = "resources/audio/";
+
+    // methods which do not modify any fields
+
+    private static void play(Clip clip) {
+        //clip.stop();
+        clip.setFramePosition(0);
+        clip.start();
+    }
+
+
+    private static Clip getClip(String filename) {
+        Clip clip = null;
+        try {
+            clip = AudioSystem.getClip();
+            AudioInputStream sample = AudioSystem.getAudioInputStream(new File(path + filename + ".wav"));
+            clip.open(sample);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return clip;
+    }
 
 
     //TODO: audio
@@ -27,6 +48,19 @@ public class SoundManager {
     //actually obtaining the clips
 
     //sfx
+    private final static Clip eatingNoise = getClip("nomnom");
+    private final static Clip throwingNoise = getClip("throw");
+    private final static Clip botHitNoise = getClip("botDown");
+    private final static Clip leftBot = getClip("botLeft");
+    private final static Clip upBot = getClip("botAbove");
+    private final static Clip rightBot = getClip("botRight");
+    private final static Clip downBot = getClip("botUnder");
+    private final static Clip muffinRechargeNoise = getClip("MuffinRechargeNoise");
+    private final static Clip no = getClip("no");
+    private final static Clip mweh = getClip("mweh");
+    private final static Clip fanfare = getClip("BattleKazoo");
+    private final static Clip boom = getClip("explosion");
+    private final static Clip unusedBot = getClip("botAppears");
     //private final static Clip clap = getClip("clap");
     //private final static Clip pink = getClip("pink");
     //private final static Clip blue = getClip("blue");
@@ -36,7 +70,24 @@ public class SoundManager {
     //private final static Clip newToot = getClip("new toot");
     //private final static Clip du = getClip("du");
 
-    //music
+    public static void playEatingNoise(){ play(eatingNoise);}
+    public static void playThrow(){play(throwingNoise);}
+    public static void playBotHit(){play(botHitNoise);}
+    public static void playLeftBot(){play(leftBot);}
+    public static void playUpBot(){play(upBot);}
+    public static void playRightBot(){play(rightBot);}
+    public static void playDownBot(){play(downBot);}
+    public static void playMuffinRechargeNoise(){play(muffinRechargeNoise);}
+    public static void playNo(){play(no);}
+    public static void playMovement(){play(mweh);}
+    public static void playFanfare(){play(fanfare);}
+    public static void playBoom(){play(boom);}
+    public static void playUnusedBot(){play(unusedBot);}
+
+    //loops
+    private final static Clip introLoop = getClip("IntroLoop");
+    private final static Clip gameLoop = getClip("gameTheme");
+    private final static Clip menuLoop = getClip("mainMenu");
     //private final static Clip backingLoop = getClip("backing loop");
     //private final static Clip reverbLoop = getClip("reverb backing loop");
     //private final static Clip secondLoop = getClip("the second loop");
@@ -45,12 +96,64 @@ public class SoundManager {
     //private final static Clip resultsLoop = getClip("results loop");
 
     //recording whether or not these are looping
+    private static boolean introLooping = false;
+    private static boolean gameLooping = false;
+    private static boolean menuLooping = false;
     private static boolean backingLooping = false;
     private static boolean reverbLooping = false;
     private static boolean secondLooping = false;
     private static boolean thirdLooping = false;
     private static boolean fourthLooping = false;
     private static boolean resultsLooping = false;
+
+    public static void startIntroLoop(){
+        if (!introLooping){
+            introLoop.setFramePosition(0);
+            introLoop.loop(Clip.LOOP_CONTINUOUSLY);
+            introLooping = true;
+        }
+    }
+
+    public static void endIntroLoop(){
+        if (introLooping){
+            introLoop.loop(0);
+            //introLoop.stop();
+            introLooping = false;
+        }
+    }
+
+    public static void startGameLoop(){
+        if (!gameLooping){
+            gameLoop.setFramePosition(0);
+            gameLoop.loop(Clip.LOOP_CONTINUOUSLY);
+            gameLooping = true;
+        }
+    }
+
+    public static void endGameLoop(){
+        if(gameLooping){
+            gameLoop.loop(0);
+            gameLoop.stop();
+            gameLooping = false;
+        }
+    }
+
+    public static void startMenuLoop(){
+        if (!menuLooping){
+            menuLoop.setFramePosition(0);
+            menuLoop.loop(Clip.LOOP_CONTINUOUSLY);
+            menuLooping = true;
+        }
+    }
+
+    public static void endMenuLoop(){
+        if (menuLooping){
+            menuLoop.loop(0);
+            menuLoop.stop();
+            menuLooping= false;
+        }
+    }
+
 
     /*
     //arrays for clips that may be played multiple times at once
@@ -73,27 +176,6 @@ public class SoundManager {
      */
 
 
-
-    // methods which do not modify any fields
-
-    private static void play(Clip clip) {
-        //clip.stop();
-        clip.setFramePosition(0);
-        clip.start();
-    }
-
-
-    private static Clip getClip(String filename) {
-        Clip clip = null;
-        try {
-            clip = AudioSystem.getClip();
-            AudioInputStream sample = AudioSystem.getAudioInputStream(new File(path + filename + ".wav"));
-            clip.open(sample);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return clip;
-    }
 
 
 

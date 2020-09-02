@@ -3,6 +3,7 @@ package GamePackage;
 import GamePackage.GameObjects.BackgroundMuffinObject;
 import GamePackage.GameObjects.GameObject;
 import GamePackage.GameObjects.StringObject;
+import utilities.SoundManager;
 import utilities.TextAssetReader;
 import utilities.HighScoreHandler;
 import utilities.Vector2D;
@@ -66,7 +67,7 @@ public class TitleScreen extends Model {
                 new Vector2D(),
                 "Muffin Mania",
                 StringObject.MIDDLE_ALIGN,
-                StringObject.SANS_60
+                StringObject.SANS_80
         );
         subtitleText = new StringObject(
                 new Vector2D(HALF_WIDTH,QUARTER_HEIGHT + SIXTEENTH_HEIGHT),
@@ -78,21 +79,21 @@ public class TitleScreen extends Model {
         play = new StringObject(
                 new Vector2D(HALF_WIDTH,HALF_HEIGHT),
                 new Vector2D(),
-                "*Play*",
+                "Play",
                 StringObject.MIDDLE_ALIGN,
                 StringObject.SANS_40
         );
         showScores = new StringObject(
                 new Vector2D(HALF_WIDTH,HALF_HEIGHT + EIGHTH_HEIGHT),
                 new Vector2D(),
-                "*Show Scores*",
+                "Show Scores",
                 StringObject.MIDDLE_ALIGN,
                 StringObject.SANS_40
         );
         showCredits = new StringObject(
                 new Vector2D(HALF_WIDTH,HALF_HEIGHT + QUARTER_HEIGHT),
                 new Vector2D(),
-                "*Show Credits*",
+                "Show Credits",
                 StringObject.MIDDLE_ALIGN,
                 StringObject.SANS_40
         );
@@ -106,7 +107,7 @@ public class TitleScreen extends Model {
         byMeText = new StringObject(
                 new Vector2D(HALF_WIDTH, 15.5*SIXTEENTH_HEIGHT),
                 new Vector2D(),
-                "by 11BelowStudio (2020)",
+                "Game by 11BelowStudio (2020)",
                 StringObject.MIDDLE_ALIGN,
                 StringObject.SANS_20
         );
@@ -134,7 +135,7 @@ public class TitleScreen extends Model {
         }
         for (StringObject o : hudObjects) {
             o.draw(g);
-            //g.draw(o.getAreaRectangle());
+            g.draw(o.getAreaRectangle());
             //and then the HUD (so its displayed above the game objects)
         }
     }
@@ -157,11 +158,11 @@ public class TitleScreen extends Model {
     }
 
     void startModelMusic(){
-        //SoundManager.startMenu();
+        SoundManager.startMenuLoop();
     }
 
     void stopModelMusic(){
-        //SoundManager.stopMenu();
+        SoundManager.endMenuLoop();
     }
 
     @Override
@@ -239,11 +240,11 @@ public class TitleScreen extends Model {
             case SHOWING_MENU_STATE:
                 if(currentAction.checkForClick()){
                     Point clickPoint = currentAction.getClickLocation();
-                    System.out.println(clickPoint);
+                    //System.out.println(clickPoint);
                     if (titleText.isClicked(clickPoint)){
-                        //SoundManager.whoIsJoe();
+                        SoundManager.playEatingNoise();
                     } else if (subtitleText.isClicked(clickPoint)){
-                        //SoundManager.discussion();
+                        SoundManager.playUnusedBot();
                     } else if (play.isClicked(clickPoint)){
                         titleScreenState = START_GAME_STATE;
                         titleScreenStateHasChanged = true;
@@ -281,10 +282,10 @@ public class TitleScreen extends Model {
         titleScreenState = SETTING_UP_SCROLLING_TEXT_STATE;
         for (String s: theText){
             if (!s.isEmpty()) {
-                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH, GAME_HEIGHT + distFromBottom), scrollSpeed, s, StringObject.MIDDLE_ALIGN));
+                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH, GAME_HEIGHT + distFromBottom), scrollSpeed, s, StringObject.MIDDLE_ALIGN, StringObject.SANS_30));
             }
             //distFromBottom += distBetweenLines;
-            distFromBottom += 22;
+            distFromBottom += 32;
         }
     }
 

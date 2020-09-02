@@ -3,6 +3,7 @@ package GamePackage.GameObjects;
 import GamePackage.Action;
 import GamePackage.Controller;
 import utilities.ImageManager;
+import utilities.SoundManager;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -111,6 +112,7 @@ public class PlayerObject extends GameObject {
         muffinCount = 0;
         muffinTimer = MUFFIN_COOLDOWN_LENGTH;
         showTimerAsArc = true;
+        SoundManager.playMuffinRechargeNoise();
         showingSpeech = false;
         updateMuffinCountText();
         this.alive = true;
@@ -119,6 +121,8 @@ public class PlayerObject extends GameObject {
 
     @Override
     void individualUpdate() {
+
+        usedMuffin = false;
 
         if(this.alive) {
             //only does this stuff if alive
@@ -129,6 +133,7 @@ public class PlayerObject extends GameObject {
             //respond appropriately to directional input
             if (a.checkForDirectionalInput()) {
                 int directionToGo = a.getDirectionalInput();
+                boolean moved = false;
                 if (directionToGo != currentState) {
                     switch (directionToGo) {
                         case UP_INT:
@@ -137,9 +142,11 @@ public class PlayerObject extends GameObject {
                                 case LEFT_INT:
                                 case MID_INT:
                                     this.currentState = directionToGo;
+                                    moved = true;
                                     break;
                                 case DOWN_INT:
                                     this.currentState = MID_INT;
+                                    moved = true;
                                     break;
                             }
                             break;
@@ -149,9 +156,11 @@ public class PlayerObject extends GameObject {
                                 case DOWN_INT:
                                 case MID_INT:
                                     this.currentState = directionToGo;
+                                    moved = true;
                                     break;
                                 case LEFT_INT:
                                     this.currentState = MID_INT;
+                                    moved = true;
                                     break;
                             }
                             break;
@@ -161,9 +170,11 @@ public class PlayerObject extends GameObject {
                                 case LEFT_INT:
                                 case MID_INT:
                                     this.currentState = directionToGo;
+                                    moved = true;
                                     break;
                                 case UP_INT:
                                     this.currentState = MID_INT;
+                                    moved = true;
                                     break;
                             }
                             break;
@@ -173,12 +184,17 @@ public class PlayerObject extends GameObject {
                                 case DOWN_INT:
                                 case MID_INT:
                                     this.currentState = directionToGo;
+                                    moved = true;
                                     break;
                                 case RIGHT_INT:
                                     this.currentState = MID_INT;
+                                    moved = true;
                                     break;
                             }
                             break;
+                    }
+                    if (moved){
+                        SoundManager.playMovement();
                     }
                     altFrameTimer = 0; //reset the altFrameTimer
                 }
@@ -194,7 +210,10 @@ public class PlayerObject extends GameObject {
                     muffinCount++;
                     muffinTimer = MUFFIN_COOLDOWN_LENGTH;
                     //double-check whether or not the muffin timer still needs to be shown as an arc
-                    showTimerAsArc = (muffinCount < MAX_MUFFINS);
+                    if(showTimerAsArc = (muffinCount < MAX_MUFFINS)){
+                        //play the muffin recharge noise again if there's still more muffins to recharge
+                        SoundManager.playMuffinRechargeNoise();
+                    }
                     updateMuffinCountText();
                 }
                 //update the angle for the muffin timer
@@ -368,6 +387,8 @@ public class PlayerObject extends GameObject {
             muffinTimer = MUFFIN_COOLDOWN_LENGTH; //reset the cooldown timer if the player had max muffins when they used the first muffin
             muffinArcAngle = 0;
             showTimerAsArc = true;
+            //play the muffin recharge noise
+            SoundManager.playMuffinRechargeNoise();
         }
         muffinCount--;
         updateMuffinCountText();
@@ -383,6 +404,8 @@ public class PlayerObject extends GameObject {
     public PlayerObject kill(){
         this.alive = false; //this is dead
         this.speak("no! my muffins!");
+        SoundManager.playNo();
+        SoundManager.playBoom();
         return this;
     }
 

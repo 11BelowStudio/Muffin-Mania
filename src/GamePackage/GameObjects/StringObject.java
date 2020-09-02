@@ -204,7 +204,7 @@ public class StringObject extends GameObject {
             g.setColor(objectColour);
             g.drawString(thisString,widthOffset,heightOffset);
             g.setFont(tempFont);
-            areaRectangle = new Rectangle((int)position.x - (w/2), (int)position.y - heightOffset,w,h);
+            areaRectangle = new Rectangle((int)position.x - (w/2), (int)position.y-heightOffset,w,h);
         }
     }
 
