@@ -19,7 +19,7 @@ public class SoundManager {
 
 
     // this may need modifying
-    private final static String path = "resources/";
+    private final static String path = "resources/audio";
 
 
     //TODO: audio

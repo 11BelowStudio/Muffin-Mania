@@ -38,7 +38,6 @@ public class BackgroundMuffinObject extends GameObject {
 
     @Override
     void renderObject(Graphics2D g) {
-        AffineTransform unrotated = g.getTransform();
 
         g.rotate(rotationAngle);
         g.drawImage(
@@ -49,7 +48,6 @@ public class BackgroundMuffinObject extends GameObject {
                 64,
                 null
         );
-        g.setTransform(unrotated);
     }
 
 

@@ -28,6 +28,9 @@ public class PlayerObject extends GameObject {
     private int muffinTimer;
     private static final int MUFFIN_COOLDOWN_ARC_SEGMENT = 360/MUFFIN_COOLDOWN_LENGTH;
     private int muffinArcAngle;
+    private static final float MUFFIN_COOLDOWN_ARC_SEGMENT_HUE = 0.33f/MUFFIN_COOLDOWN_LENGTH;
+    private static final Color FULL_MUFFIN_TIMER_COLOR = Color.getHSBColor(0.33f, 0.66f, 0.9f);
+    private Color muffinTimerColor;
 
     private boolean showTimerAsArc;
 
@@ -92,12 +95,13 @@ public class PlayerObject extends GameObject {
                 new Vector2D(),
                 "",
                 StringObject.MIDDLE_ALIGN,
-                StringObject.SANS_20
+                StringObject.SANS_25
         );
         showingSpeech = false;
 
         this.muffinMachineImage = ImageManager.getImage("MuffinMachine");
         this.muffineMachineStatusImage = ImageManager.getImage("MachineStatus");
+
     }
 
     public PlayerObject revive(){
@@ -195,6 +199,7 @@ public class PlayerObject extends GameObject {
                 }
                 //update the angle for the muffin timer
                 muffinArcAngle = 360 - (muffinTimer * MUFFIN_COOLDOWN_ARC_SEGMENT);
+                muffinTimerColor = Color.getHSBColor(0.33f-(muffinTimer * MUFFIN_COOLDOWN_ARC_SEGMENT_HUE), 0.66f, 0.9f);
             }
 
             //use a muffin if the spacebar is pressed
@@ -225,6 +230,27 @@ public class PlayerObject extends GameObject {
 
     private void updateMuffinCountText(){
         muffinCountText.setValue(muffinCount);
+        switch (muffinCount){
+            case 0:
+            case 1:
+                muffinCountText.setPredefinedColour(StringObject.RED_NUM);
+                break;
+            case 2:
+            case 3:
+            case 4:
+                muffinCountText.setPredefinedColour(StringObject.ORANGE_NUM);
+                break;
+            case 5:
+            case 6:
+            case 7:
+                muffinCountText.setPredefinedColour(StringObject.YELLOW_NUM);
+                break;
+            case 8:
+            case 9:
+            case 10:
+                muffinCountText.setPredefinedColour(StringObject.GREEN_NUM);
+                break;
+        }
     }
 
 
@@ -257,8 +283,9 @@ public class PlayerObject extends GameObject {
             );
 
             //draw the timer shape (if still alive ofc)
-            g.setColor(Color.white);
+
             if(showTimerAsArc) {
+                g.setColor(muffinTimerColor);
                 //show an arc for the timer if it's supposed to be shown as an arc (not full)
                 g.fillArc(
                         -88,
@@ -269,7 +296,8 @@ public class PlayerObject extends GameObject {
                         muffinArcAngle
                 );
             } else{
-                //just draw it as a full circle if the timer is full
+                g.setColor(FULL_MUFFIN_TIMER_COLOR);
+                //just draw it as a full white circle if the timer is full
                 g.fillOval(
                         -88,
                         40,

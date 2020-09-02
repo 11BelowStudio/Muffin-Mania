@@ -47,7 +47,7 @@ public class Muffin extends LaneTravellingObject {
 
     @Override
     void renderObject(Graphics2D g) {
-        AffineTransform unrotated = g.getTransform();
+        //AffineTransform unrotated = g.getTransform();
 
         g.rotate(SPAWN_SETTINGS[lane][3]);
         g.drawImage(
@@ -58,6 +58,6 @@ public class Muffin extends LaneTravellingObject {
                 64,
                 null
         );
-        g.setTransform(unrotated);
+        //g.setTransform(unrotated);
     }
 }

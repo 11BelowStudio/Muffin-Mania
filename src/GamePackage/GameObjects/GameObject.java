@@ -41,8 +41,14 @@ public abstract class GameObject {
     static final Color SAFETY_ORANGE = new Color(233, 118, 0);
     //safety purple: #964f8e
     static final Color SAFETY_PURPLE = new Color(150, 79, 142);
-
-
+    //RAL traffic red: #C1121C
+    static final Color TRAFFIC_RED =new Color(193, 18, 28);
+    //RAL traffic orange: #E15501
+    static final Color TRAFFIC_ORANGE = new Color(225, 85, 1);
+    //RAL traffic yellow: #F0CA00
+    static final Color TRAFFIC_YELLOW = new Color(240, 202, 0);
+    //RAL traffic green: #008754
+    static final Color TRAFFIC_GREEN = new Color(0, 135, 84);
 
 
     public GameObject(Vector2D p, Vector2D v){

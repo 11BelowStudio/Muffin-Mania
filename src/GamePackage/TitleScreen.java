@@ -41,6 +41,8 @@ public class TitleScreen extends Model {
     private final StringObject play;
     private final StringObject showScores;
     private final StringObject showCredits;
+    private final StringObject quitText;
+    private final StringObject byMeText;
 
     private final ArrayList<StringObject> scrollingTextToAdd;
 
@@ -59,17 +61,63 @@ public class TitleScreen extends Model {
         menuScreenStringObjects = new ArrayList<>();
 
         //declaring the stringobjects for the menu screen
-        titleText = new StringObject(new Vector2D(HALF_WIDTH,QUARTER_HEIGHT),new Vector2D(),"Muffin Mania",StringObject.MIDDLE_ALIGN,StringObject.SANS_60);
-        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,QUARTER_HEIGHT + SIXTEENTH_HEIGHT), new Vector2D(),"Tactical Muffin Action",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
-        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
-        showScores = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT + EIGHTH_HEIGHT),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
-        showCredits = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT + QUARTER_HEIGHT),new Vector2D(),"*Show Credits*",StringObject.MIDDLE_ALIGN,StringObject.SANS_40);
+        titleText = new StringObject(
+                new Vector2D(HALF_WIDTH,QUARTER_HEIGHT),
+                new Vector2D(),
+                "Muffin Mania",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_60
+        );
+        subtitleText = new StringObject(
+                new Vector2D(HALF_WIDTH,QUARTER_HEIGHT + SIXTEENTH_HEIGHT),
+                new Vector2D(),
+                "Tactical Muffin Action",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_40
+        );
+        play = new StringObject(
+                new Vector2D(HALF_WIDTH,HALF_HEIGHT),
+                new Vector2D(),
+                "*Play*",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_40
+        );
+        showScores = new StringObject(
+                new Vector2D(HALF_WIDTH,HALF_HEIGHT + EIGHTH_HEIGHT),
+                new Vector2D(),
+                "*Show Scores*",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_40
+        );
+        showCredits = new StringObject(
+                new Vector2D(HALF_WIDTH,HALF_HEIGHT + QUARTER_HEIGHT),
+                new Vector2D(),
+                "*Show Credits*",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_40
+        );
+        quitText = new StringObject(
+                new Vector2D(HALF_WIDTH, 15*SIXTEENTH_HEIGHT),
+                new Vector2D(),
+                "Press escape to quit",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_30
+        );
+        byMeText = new StringObject(
+                new Vector2D(HALF_WIDTH, 15.5*SIXTEENTH_HEIGHT),
+                new Vector2D(),
+                "by 11BelowStudio (2020)",
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_20
+        );
         //adding these to the collection of them
         menuScreenStringObjects.add(titleText);
         menuScreenStringObjects.add(subtitleText);
         menuScreenStringObjects.add(play);
         menuScreenStringObjects.add(showScores);
         menuScreenStringObjects.add(showCredits);
+        menuScreenStringObjects.add(quitText);
+        menuScreenStringObjects.add(byMeText);
 
         scrollingTextToAdd = new ArrayList<>();
 
@@ -205,6 +253,10 @@ public class TitleScreen extends Model {
                     } else if (showCredits.isClicked(clickPoint)){
                         createScrollingText(CREDITS_TEXT, 30, 50);
                         titleScreenStateHasChanged = true;
+                    } else if (quitText.isClicked(clickPoint)){
+                        quitText.cycleColours();
+                    } else if (byMeText.isClicked(clickPoint)){
+                        byMeText.cycleColours();
                     }
                 } else if (currentAction.checkForSpacePress()){
                     titleScreenState = START_GAME_STATE;
@@ -255,8 +307,7 @@ public class TitleScreen extends Model {
                 //wipes contents (the scrolling text) of aliveHUD
                 aliveHUD.clear();
                 //revives and adds the menu StringObjects to aliveHUD
-                for (StringObject s:
-                     menuScreenStringObjects) {
+                for (StringObject s: menuScreenStringObjects) {
                     aliveHUD.add(s.revive());
                 }
                 break;

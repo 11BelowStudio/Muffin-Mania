@@ -7,14 +7,14 @@ import java.awt.*;
 
 public class CupcakeSpawnerObject extends GameObject {
 
-    private static double[][] SPAWNER_POSITIONS = {
+    private static final double[][] SPAWNER_POSITIONS = {
             {392, 40},
             {744, 392},
             {392, 744},
             {40, 392}
     };
 
-    private static int[][] SPAWNER_SPRITESHEET_Y_COORDS = {
+    private static final int[][] SPAWNER_SPRITESHEET_Y_COORDS = {
             {0,80},
             {80,160},
             {160,240},

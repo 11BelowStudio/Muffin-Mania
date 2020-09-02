@@ -22,10 +22,10 @@ public class StringObject extends GameObject {
 
     private int currentPredefinedColour;
     public static final int WHITE_NUM = 0;
-    public static final int PINK_NUM = 1;
-    public static final int BLUE_NUM = 2;
+    public static final int RED_NUM = 1;
+    public static final int ORANGE_NUM = 2;
     public static final int YELLOW_NUM = 3;
-    public static final int PURPLE_NUM = 4;
+    public static final int GREEN_NUM = 4;
 
 
     private Rectangle areaRectangle;
@@ -33,6 +33,7 @@ public class StringObject extends GameObject {
     //le ebic font has arrived no bamboozle
     public static final Font SANS_12 = new Font("Comic Sans MS", Font.PLAIN, 12);
     public static final Font SANS_20 = new Font("Comic Sans MS", Font.PLAIN, 20);
+    public static final Font SANS_25 = new Font("Comic Sans MS", Font.PLAIN, 25);
     public static final Font SANS_30 = new Font("Comic Sans MS", Font.PLAIN, 30);
     public static final Font SANS_40 = new Font("Comic sans MS", Font.PLAIN,40);
     public static final Font SANS_50 = new Font("Comic sans MS", Font.PLAIN,50);
@@ -71,7 +72,7 @@ public class StringObject extends GameObject {
         thisString = "";
 
         objectColour = Color.WHITE;
-        //setPredefinedColour(WHITE_NUM);
+        setPredefinedColour(WHITE_NUM);
         theFont = SANS_20;
         areaRectangle = new Rectangle();
         scrolling = false;
@@ -92,7 +93,7 @@ public class StringObject extends GameObject {
     @Override
     public StringObject revive(Vector2D p, Vector2D v) {
         super.revive(p,v);
-        //setPredefinedColour(WHITE_NUM);
+        setPredefinedColour(WHITE_NUM);
         return this;
     }
 
@@ -115,7 +116,6 @@ public class StringObject extends GameObject {
         theFont = f;
     }
 
-    /*
 
     //version of revive() encapsulating setTextAndPredefinedColour()
     public StringObject revive(String newText, int definedColourValue){
@@ -142,17 +142,17 @@ public class StringObject extends GameObject {
 
     private void setColourToPredefinedColour(){
         switch (currentPredefinedColour){
-            case PINK_NUM:
-                objectColour = PINK_COLOUR;
+            case RED_NUM:
+                objectColour = TRAFFIC_RED;
                 break;
-            case BLUE_NUM:
-                objectColour = BLUE_COLOUR;
+            case ORANGE_NUM:
+                objectColour = TRAFFIC_ORANGE;
                 break;
             case YELLOW_NUM:
-                objectColour = YELLOW_COLOUR;
+                objectColour = TRAFFIC_YELLOW;
                 break;
-            case PURPLE_NUM:
-                objectColour = PURPLE_COLOUR;
+            case GREEN_NUM:
+                objectColour = TRAFFIC_GREEN;
                 break;
             default:
                 //if predefined value is not recognized, it's set to the white value
@@ -168,7 +168,6 @@ public class StringObject extends GameObject {
         setText(newText);
         setPredefinedColour(definedColourValue);
     }
-    */
 
     public void setColour(Color c){ objectColour = c;}
 

@@ -84,7 +84,8 @@ public class Game extends Model{
                 new Vector2D(),
                 "Score: ",
                 0,
-                StringObject.MIDDLE_ALIGN
+                StringObject.MIDDLE_ALIGN,
+                StringObject.SANS_40
         );
 
         muffinStack = new Stack<>();
@@ -114,7 +115,8 @@ public class Game extends Model{
         hudObjects = new ArrayList<>();
         aliveHUD = new ArrayList<>();
 
-        background = ImageManager.getImage("BasicBG");
+        //background = ImageManager.getImage("BasicBG");
+        background = ImageManager.getImage("BGv2");
 
     }
 
@@ -156,11 +158,11 @@ public class Game extends Model{
             m.draw(g);
         }
 
-        for (CupcakeBot c: bCupcakes) {
-            c.draw(g);
-        }
         for (Muffin m: bMuffins){
             m.draw(g);
+        }
+        for (CupcakeBot c: bCupcakes) {
+            c.draw(g);
         }
 
         for (CupcakeSpawnerObject c: cupcakeSpawners){
@@ -262,7 +264,7 @@ public class Game extends Model{
 
         } else{ //stuff that happens if the game isn't over
 
-            if (canUseMuffins) { //if you've reached the state of the game where you are allowed to use muffins
+            if (gameHasProperlyStarted) { //if you've reached the state of the game where you are allowed to use muffins
 
                 //if you used a muffin
                 if (you.checkIfUsedMuffin()) {
@@ -291,12 +293,11 @@ public class Game extends Model{
                             break;
                     }
                 }
-            }
 
-            // CUPCAKE BOT SPAWNING
+                // CUPCAKE BOT SPAWNING
 
-            //only spawn them in once the game has properly started
-            if (gameHasProperlyStarted) {
+                //only spawn them in once the game has properly started
+
                 if (cupcakeSpawnTimer < 1) {
                     reviveACupcake();
                 } else {
@@ -600,33 +601,35 @@ public class Game extends Model{
                     you.speak("I will never be able to eat a muffin again");
                     break;
                 case 5:
-                    you.speak("But, I can move with the arrow keys to the lane they are coming from");
+                    you.speak("But, I can move to the lane they are coming from");
                     break;
                 case 6:
-                    you.speak("And then press space to throw a muffin at their robots, destroying it.");
+                    you.speak("by using the arrow keys, and attack their robots");
                     break;
                 case 7:
-                    you.speak("But, that means I can't eat that muffin.");
+                    you.speak("by then pressing space to throw a muffin.");
                     break;
                 case 8:
-                    you.speak("And I really want to eat it, by pressing space whilst in the middle");
+                    you.speak("But, that means I can't eat that muffin.");
                     break;
                 case 9:
-                    you.speak("Once I've used a muffin, it takes a moment to return");
+                    you.speak("And I really want to eat it, by pressing space whilst in the middle");
                     break;
                 case 10:
-                    you.speak("and I can only hold up to 10 at once.");
+                    you.speak("Once I've used a muffin, it takes a moment to return");
                     break;
                 case 11:
-                    you.speak("Oh dear. They're starting their attack.");
-                    canUseMuffins = true;
+                    you.speak("and I can only hold up to 10 at once.");
                     break;
                 case 12:
-                    you.speak("YOU'LL NEVER TAKE ME ALIVE!");
-                    reviveACupcake();
+                    you.speak("Oh dear. They're starting their attack.");
                     gameHasProperlyStarted = true;
                     break;
-                case 21:
+                case 13:
+                    you.speak("YOU'LL NEVER TAKE ME ALIVE!");
+                    //gameHasProperlyStarted = true;
+                    break;
+                case 14:
                     you.shutUp();
                     stillInCutscene = false;
                     break;

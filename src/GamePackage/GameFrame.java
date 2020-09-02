@@ -20,6 +20,7 @@ public class GameFrame extends JFrame {
         comp = v;
         getContentPane().add(BorderLayout.CENTER, comp);
         this.setVisible(true);
+        this.setResizable(false);
         pack();
     }
 
